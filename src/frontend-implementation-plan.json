@@ -1,0 +1,122 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Frontend updates for 3-role registration, coordinator verification gating, and faculty approvals UI",
+  "requirements": [
+    {
+      "id": "REQ-35",
+      "summary": "Update registration UI to support Student, Student Coordinator, and Faculty roles with clear coordinator-approval explanation.",
+      "acceptanceCriteria": [
+        "RegistrationGate role dropdown includes Student, Student Coordinator, and Faculty.",
+        "RegistrationGate shows clear English helper text indicating Student Coordinators must be approved by Faculty before gaining booking permissions.",
+        "Registration submission sends the selected role using the updated backend ProfileRole type."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/auth/RegistrationGate.tsx",
+          "operation": "modify",
+          "description": "Add Student to the role Select options and update helper/note copy to clearly explain that Student Coordinators require faculty approval before they can book/cancel venues; ensure submission continues to pass the selected ProfileRole value."
+        }
+      ]
+    },
+    {
+      "id": "REQ-36",
+      "summary": "Update frontend permission gating so booking/cancellation UI is only available for Faculty and verified Student Coordinators.",
+      "acceptanceCriteria": [
+        "The read-only hook (currently checking ProfileRole.studentCoordinator) is updated to compute read-only based on (role + coordinator verification status).",
+        "BookingPage shows BookingForm only when the user has booking permissions; otherwise it shows an English read-only/needs-approval notice.",
+        "Upcoming Events detail actions and bulk cancellation UI are disabled/hidden when the user does not have booking permissions (Students and unverified Student Coordinators)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useIsStudentReadOnly.ts",
+          "operation": "modify",
+          "description": "Update the hook to determine read-only status based on ProfileRole plus coordinator verificationStatus (Students always read-only; Student Coordinators read-only until verified; Faculty not read-only) and expose enough state for UI to show an English 'needs approval' vs 'read-only' notice."
+        },
+        {
+          "path": "frontend/src/pages/BookingPage.tsx",
+          "operation": "modify",
+          "description": "Use the updated read-only/permission result to render BookingForm only when booking permissions are granted; otherwise show an English notice tailored for Students vs pending/unverified Student Coordinators."
+        },
+        {
+          "path": "frontend/src/components/dashboards/UpcomingEventsDashboard.tsx",
+          "operation": "modify",
+          "description": "Replace the existing StudentCoordinator-only gating with permission-based gating so selection checkboxes, 'Select All', and bulk cancellation toolbar are hidden/disabled for Students and unverified/pending Student Coordinators."
+        },
+        {
+          "path": "frontend/src/components/dashboards/UpcomingEventDetailView.tsx",
+          "operation": "modify",
+          "description": "Update the 'canCancel' logic to align with booking permissions (Faculty and verified Student Coordinators only); hide/disable cancel UI for Students and unverified/pending Student Coordinators and ensure any messaging remains English."
+        }
+      ]
+    },
+    {
+      "id": "REQ-37",
+      "summary": "Add a Faculty-only dashboard/tab to list and approve/reject pending Student Coordinator verification requests.",
+      "acceptanceCriteria": [
+        "A new tab (e.g., \"Approvals\") appears only for Faculty users.",
+        "The Approvals view lists pending Student Coordinator verification requests with enough info to identify the user (principal/email/contact).",
+        "Faculty can approve or reject a request from the UI, with loading, success, and error states.",
+        "After approving/rejecting, the pending list refreshes and reflects the update."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/dashboards/ApprovalsDashboard.tsx",
+          "operation": "create",
+          "description": "Create a new Faculty-only Approvals dashboard that fetches pending verification requests and renders them in a clear list/table using shadcn-ui components (e.g., Card, Button, Alert, Badge, Separator). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/AuthenticatedApp.tsx",
+          "operation": "modify",
+          "description": "Wire the new Approvals tab into the existing Tabs UI and render it only when the caller's profile role is Faculty (hide the tab for Students and Student Coordinators)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-38",
+      "summary": "Show Student Coordinator verification status in Profile dashboard and keep it accurate after faculty actions.",
+      "acceptanceCriteria": [
+        "ProfileDashboard shows the user role as before and additionally shows verification status when the role is Student Coordinator.",
+        "When a coordinator becomes verified, the UI updates after refresh/reload (or query invalidation) to show verified status."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/dashboards/ProfileDashboard.tsx",
+          "operation": "modify",
+          "description": "Add Student to role labeling, and when role is Student Coordinator display an English verification status label (e.g., Pending faculty approval / Verified / Unverified) based on profile.verificationStatus."
+        }
+      ]
+    },
+    {
+      "id": "REQ-39",
+      "summary": "Update frontend type usage and add React Query hooks for coordinator verification requests while keeping existing hooks working.",
+      "acceptanceCriteria": [
+        "The generated frontend backend bindings compile with the updated ProfileRole and any new verification-related types.",
+        "New React Query hook(s) are added for: (1) fetching pending verification requests, (2) approving, (3) rejecting.",
+        "Existing hooks (useCallerUserProfile, useRegisterProfile, booking hooks) continue to compile and function, with minimal required updates to pass/parse new fields."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/usePendingVerificationRequests.ts",
+          "operation": "create",
+          "description": "Add a React Query hook that calls the backend capability to fetch pending Student Coordinator verification requests, with appropriate loading/error handling and caching keys."
+        },
+        {
+          "path": "frontend/src/hooks/useApproveVerificationRequest.ts",
+          "operation": "create",
+          "description": "Add a React Query mutation hook to approve a pending verification request and invalidate the pending list and currentUserProfile caches on success."
+        },
+        {
+          "path": "frontend/src/hooks/useRejectVerificationRequest.ts",
+          "operation": "create",
+          "description": "Add a React Query mutation hook to reject a pending verification request and invalidate the pending list caches on success (and invalidate currentUserProfile if appropriate)."
+        },
+        {
+          "path": "frontend/src/hooks/useIsStudentReadOnly.ts",
+          "operation": "modify",
+          "description": "Ensure the hook compiles against updated bindings (ProfileRole now includes student; profile includes verificationStatus) and remains compatible with existing call sites after updating them."
+        }
+      ]
+    }
+  ]
+}

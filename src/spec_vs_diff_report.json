@@ -1,0 +1,83 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-15T08:06:53.046Z",
+  "summary": "Diff implements the new 3-role model and adds verification status fields, plus frontend read-only gating and some verification-related hooks. However, the faculty verification workflow appears incomplete (missing reject path and faculty approvals UI), and backend booking/verification enforcement endpoints are not fully evidenced in the truncated backend diff.",
+  "missing_requirements": [
+    {
+      "id": "REQ-33",
+      "requirement": "Provide full backend APIs for faculty verification workflow, including faculty-only pending list plus approve and reject endpoints that trap for non-faculty, and return/store a clear rejection reason.",
+      "reason": "Frontend only shows calls for listing pending requests and approving; no evidence of a reject hook or any reject API usage. Backend diff is truncated and does not show the required endpoints or non-faculty trapping behavior for list/approve/reject.",
+      "evidence": [
+        "frontend/src/hooks/usePendingVerificationRequests.ts",
+        "frontend/src/hooks/useApproveVerificationRequest.ts",
+        "backend/main.mo (truncated)"
+      ]
+    },
+    {
+      "id": "REQ-34",
+      "requirement": "Enforce booking mutations authorization so only Faculty and verified Student Coordinators can request/cancel bookings; Students and unverified/pending coordinators must be blocked from requestBooking, cancelBooking, and cancelBookings while read-only endpoints remain accessible.",
+      "reason": "A helper function for booking permission checks is added, but the diff does not show it being applied to requestBooking/cancelBooking/cancelBookings (backend file is truncated), so enforcement cannot be verified from the provided evidence.",
+      "evidence": [
+        "backend/main.mo (truncated)"
+      ]
+    },
+    {
+      "id": "REQ-35",
+      "requirement": "Registration UI must clearly explain in English that Student Coordinators require faculty approval before they can book/cancel venues.",
+      "reason": "RegistrationGate shows role selection including Student and Student Coordinator (Faculty option and helper text are not visible due to truncation), so the required explanatory helper text cannot be confirmed from the diff summary.",
+      "evidence": [
+        "frontend/src/components/auth/RegistrationGate.tsx (truncated)"
+      ]
+    },
+    {
+      "id": "REQ-37",
+      "requirement": "Add a Faculty-only frontend dashboard/tab (e.g., \"Approvals\") to view pending Student Coordinator verification requests and approve/reject with loading/success/error states and list refresh.",
+      "reason": "No new dashboard/tab/view component is shown for approvals management; only hooks for pending list and approve are added. No reject UI/action is shown.",
+      "evidence": [
+        "frontend/src/hooks/usePendingVerificationRequests.ts",
+        "frontend/src/hooks/useApproveVerificationRequest.ts"
+      ]
+    },
+    {
+      "id": "REQ-39",
+      "requirement": "Add React Query hooks for (1) fetching pending verification requests, (2) approving, and (3) rejecting.",
+      "reason": "Hooks exist for fetching pending requests and approving, but no hook for rejecting is present in the added/modified files.",
+      "evidence": [
+        "frontend/src/hooks/usePendingVerificationRequests.ts",
+        "frontend/src/hooks/useApproveVerificationRequest.ts"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Backend query endpoint `isVerifiedForBookings()` exposed for client-side role switching/permission checking.",
+      "reason": "Not requested by any requirement; requirements only specify booking mutation authorization enforcement and verification workflow APIs for faculty actions/pending list.",
+      "evidence": [
+        "backend/main.mo (truncated)"
+      ]
+    },
+    {
+      "description": "Introduction of three verification status variants (#unverified, #pending, #verified) and migration mapping old studentCoordinator users to #pending.",
+      "reason": "Spec requires an unverified state after registration and a pending list; it does not explicitly request a third distinct `#unverified` vs `#pending` separation or the specific migration behavior setting existing coordinators to pending.",
+      "evidence": [
+        "backend/main.mo (truncated)",
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.62,
+  "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "frontend/src/components/auth/RegistrationGate.tsx",
+    "frontend/src/components/dashboards/ProfileDashboard.tsx",
+    "frontend/src/components/dashboards/UpcomingEventDetailView.tsx",
+    "frontend/src/components/dashboards/UpcomingEventsDashboard.tsx",
+    "frontend/src/hooks/useApproveVerificationRequest.ts",
+    "frontend/src/hooks/useIsStudentReadOnly.ts",
+    "frontend/src/hooks/usePendingVerificationRequests.ts",
+    "frontend/src/pages/BookingPage.tsx",
+    "project_state.json"
+  ]
+}

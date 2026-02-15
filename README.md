@@ -1,2 +1,3 @@
-# nitj-venue-booking-app-with-conflict-detection-and-internet-identity-access-gati
-Exported from Caffeine project: NITJ venue booking app with conflict detection and Internet Identity access gating
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

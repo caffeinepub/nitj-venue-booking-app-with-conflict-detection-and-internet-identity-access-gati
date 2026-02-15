@@ -1,0 +1,124 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-15T08:06:53.050Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 8,
+    "implemented": 4,
+    "items": [
+      {
+        "id": "REQ-32",
+        "summary": "Extend the backend profile role model to support three roles: Student (read-only), Student Coordinator (requires faculty verification before gaining booking permissions), and Faculty (full permissions).",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-33",
+        "summary": "Add backend persistence and APIs for the Student Coordinator faculty-verification workflow: allow Student Coordinators to be in an unverified state after registration, allow Faculty to list pending verification requests, and allow Faculty to approve or reject verification requests.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-34",
+        "summary": "Update backend authorization enforcement so that only Faculty and verified Student Coordinators can create or cancel bookings; Students and unverified Student Coordinators must be blocked from all booking mutations (requestBooking, cancelBooking, cancelBookings) while still being allowed to read schedules and event details.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-35",
+        "summary": "Update the registration UI to let users select among Student, Student Coordinator, and Faculty, and ensure user-facing text clearly explains that Student Coordinators require faculty approval before they can book/cancel venues.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/auth/RegistrationGate.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/auth/RegistrationGate.tsx"
+        ]
+      },
+      {
+        "id": "REQ-36",
+        "summary": "Update the frontend read-only gating logic to reflect the new permission rules: Students are always read-only; Student Coordinators are read-only until verified; Faculty is not read-only.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useIsStudentReadOnly.ts",
+          "frontend/src/pages/BookingPage.tsx",
+          "frontend/src/components/dashboards/UpcomingEventsDashboard.tsx",
+          "frontend/src/components/dashboards/UpcomingEventDetailView.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useIsStudentReadOnly.ts",
+          "frontend/src/pages/BookingPage.tsx",
+          "frontend/src/components/dashboards/UpcomingEventsDashboard.tsx",
+          "frontend/src/components/dashboards/UpcomingEventDetailView.tsx"
+        ]
+      },
+      {
+        "id": "REQ-37",
+        "summary": "Add a Faculty-only frontend dashboard/tab to manage Student Coordinator verification requests (view pending requests and approve/reject them).",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/components/dashboards/ApprovalsDashboard.tsx",
+          "frontend/src/pages/AuthenticatedApp.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-38",
+        "summary": "Display verification status in the Profile dashboard for Student Coordinators (e.g., \"Pending faculty approval\" vs \"Verified\") and ensure the label is accurate after faculty actions.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/dashboards/ProfileDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/dashboards/ProfileDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-39",
+        "summary": "Update the shared frontend/backend type bindings and React Query hooks to support the new role and verification fields without modifying immutable hook/provider files.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/usePendingVerificationRequests.ts",
+          "frontend/src/hooks/useApproveVerificationRequest.ts",
+          "frontend/src/hooks/useRejectVerificationRequest.ts",
+          "frontend/src/hooks/useIsStudentReadOnly.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/usePendingVerificationRequests.ts",
+          "frontend/src/hooks/useApproveVerificationRequest.ts",
+          "frontend/src/hooks/useIsStudentReadOnly.ts"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-implementation-plan.json",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/auth/RegistrationGate.tsx",
+    "frontend/src/components/dashboards/ProfileDashboard.tsx",
+    "frontend/src/components/dashboards/UpcomingEventDetailView.tsx",
+    "frontend/src/components/dashboards/UpcomingEventsDashboard.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useApproveVerificationRequest.ts",
+    "frontend/src/hooks/useIsStudentReadOnly.ts",
+    "frontend/src/hooks/usePendingVerificationRequests.ts",
+    "frontend/src/pages/BookingPage.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

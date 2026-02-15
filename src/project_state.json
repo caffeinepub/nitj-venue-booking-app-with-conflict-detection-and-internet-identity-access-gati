@@ -1,0 +1,435 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 13,
+  "summary": "Build a venue booking app for NIT Jalandhar (Motoko backend + React frontend) with Internet Identity login + nitj.ac.in email gating, enhanced booking validation (hard same-venue overlap rejection with conflicting club + head contact details, simultaneous-events cross-venue warning, and <15 min rest-gap warning requiring backend-enforced user confirmation), automatic conflict-based approval, today’s confirmed schedule, updated venue list (LT 101–LT 404 + IT Park/Main Ground/Community Center), booking form updates (Club Name becomes Club/Event selector + add Event Description), and role-based access with three roles: Student (read-only), Student Coordinator (requires faculty verification/approval before gaining booking permissions), and Faculty (full permissions).",
+  "architectural_notes": [
+    "Platform decision: implement as Motoko canister backend + React/TypeScript frontend (not Python/Streamlit/SQLite).",
+    "Auth decision: use Internet Identity; add additional UI-level email-domain (nitj.ac.in) restriction for allowed users.",
+    "Booking decision: bookings are auto-approved if no conflict; conflicts are rejected with existing booking details.",
+    "Venue list is now a fixed controlled set and replaces all previous venue options.",
+    "Booking form Club Name input becomes a controlled dropdown with an 'Others' option enabling custom entry.",
+    "New UI sections required: Profile, Upcoming Events (detail view), and Notifications dashboards.",
+    "Booking lifecycle now includes user-initiated cancellation; booking data should include expected audience and support multiple-event selection/management.",
+    "Conflict handling update: same-venue overlapping-time conflict rejection must include conflicting booking’s club name and club head contact name/phone in the backend response for UI display.",
+    "Simultaneous-events check: backend should compute overlapping bookings in other venues and return as a warning (non-blocking) in the booking response payload.",
+    "Rest-gap rule: backend-enforced <15-minute gap warning requires an explicit client-provided confirmation flag (e.g., confirm_anyway) to proceed/approve."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-internet-identity-sign-in-and-gate-all-booking-features-behind-authentication",
+      "title": "Implement Internet Identity sign-in and gate all booking features behind authentication.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-after-internet-identity-login-require-the-user-to-provide-an-official-email-ending-with-nitj-ac-in-for-faculty-and-student-coordinators-and-block-app-access-until-a-valid-email-is-saved-for-the-logged-in-principal",
+      "title": "After Internet Identity login, require the user to provide an official email ending with \"nitj.ac.in\" (for faculty and student coordinators) and block app access until a valid email is saved for the logged-in principal.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-automatic-booking-request-flow-when-a-user-submits-a-booking-request-the-backend-checks-conflicts-if-no-conflict-it-immediately-creates-an-approved-booking-if-conflict-exists-it-rejects-and-returns-the-existing-conflicting-booking-details-needed-for-the-error-message",
+      "title": "Implement automatic booking request flow: when a user submits a booking request, the backend checks conflicts; if no conflict, it immediately creates an APPROVED booking; if conflict exists, it rejects and returns the existing conflicting booking details needed for the error message.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-booking-form-ui-with-inputs-club-name-text-venue-dropdown-with-lhc-101-mph-it-park-date-date-input-start-time-and-end-time-time-inputs-and-a-request-booking-submit-action",
+      "title": "Build the booking form UI with inputs: Club Name (text), Venue (dropdown with LHC-101, MPH, IT Park), Date (date input), Start Time and End Time (time inputs), and a \"Request Booking\" submit action.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-today-s-confirmed-schedule-in-a-table-view-showing-only-approved-bookings-for-today-so-users-can-see-free-slots",
+      "title": "Display today’s confirmed schedule in a table view showing only APPROVED bookings for today so users can see free slots.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-cohesive-visual-theme-across-the-app-layout-typography-spacing-components-suitable-for-a-campus-admin-tool-avoid-blue-purple-as-primary-accents",
+      "title": "Apply a cohesive visual theme across the app (layout, typography, spacing, components) suitable for a campus admin tool; avoid blue/purple as primary accents.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-and-include-basic-app-branding-images-as-static-assets-and-reference-them-in-the-ui",
+      "title": "Generate and include basic app branding images as static assets and reference them in the UI.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-venue-dropdown-options-across-the-app-with-the-new-venue-list-and-remove-the-previous-venue-list",
+      "title": "Replace the Venue dropdown options across the app with the new venue list and remove the previous venue list.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-normalize-venue-code-capitalization-in-any-venue-related-ui-so-that-sb1-sb2-sb3-a2-c4-and-c5-are-displayed-in-uppercase-wherever-those-codes-appear-including-any-existing-data-shown-in-tables-dashboards",
+      "title": "Normalize venue code capitalization in any venue-related UI so that SB1/SB2/SB3, A2, C4, and C5 are displayed in uppercase wherever those codes appear (including any existing data shown in tables/dashboards).",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-booking-form-club-name-field-from-free-text-input-to-a-dropdown-containing-the-provided-club-list-plus-an-others-option-when-others-is-selected-show-an-additional-text-input-to-capture-a-custom-club-name",
+      "title": "Change the booking form Club Name field from free-text input to a dropdown containing the provided club list plus an \"Others\" option; when \"Others\" is selected, show an additional text input to capture a custom club name.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-expected-audience-field-to-the-booking-request-flow-and-persist-it-with-the-booking-so-it-can-be-shown-in-upcoming-event-details",
+      "title": "Add an \"Expected Audience\" field to the booking request flow and persist it with the booking so it can be shown in upcoming event details.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-booking-cancellation-so-a-signed-in-user-can-cancel-their-own-booking-s-and-cancelled-bookings-do-not-appear-in-the-today-s-confirmed-schedule-table",
+      "title": "Implement booking cancellation so a signed-in user can cancel their own booking(s), and cancelled bookings do not appear in the \"Today's Confirmed Schedule\" table.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-three-authenticated-post-registration-dashboards-1-profile-dashboard-2-upcoming-events-dashboard-with-event-detail-view-and-3-notifications-dashboard",
+      "title": "Create three authenticated, post-registration dashboards: (1) Profile Dashboard, (2) Upcoming Events Dashboard with event detail view, and (3) Notifications Dashboard.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-support-selecting-and-managing-multiple-events-bookings-from-the-upcoming-events-dashboard-including-bulk-cancellation-for-eligible-bookings-owned-by-the-user",
+      "title": "Support selecting and managing multiple events (bookings) from the Upcoming Events Dashboard, including bulk cancellation for eligible bookings owned by the user.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-booking-data-model-to-store-club-head-contact-details-contact-name-and-phone-number-with-each-booking-so-that-conflict-and-warning-messages-can-display-this-information",
+      "title": "Extend the booking data model to store club head contact details (contact name and phone number) with each booking so that conflict and warning messages can display this information.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-check-a-hard-conflict-when-a-booking-is-requested-for-the-same-venue-and-date-with-overlapping-time-against-an-existing-non-cancelled-booking-reject-the-booking-request-and-return-the-conflicting-booking-s-club-name-contact-name-contact-phone-number-venue-and-time-range-so-the-ui-can-render-a-detailed-error-message",
+      "title": "Implement Check A (Hard Conflict): when a booking is requested for the same venue and date with overlapping time against an existing non-cancelled booking, reject the booking request and return the conflicting booking’s club name, contact name, contact phone number, venue, and time range so the UI can render a detailed error message.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-check-b-simultaneous-events-warning-when-a-booking-request-overlaps-in-time-same-date-with-other-non-cancelled-bookings-in-different-venues-do-not-block-the-booking-instead-return-a-warning-list-including-each-simultaneous-event-s-club-name-venue-and-contact-details-and-display-a-non-blocking-warning-message-to-the-user-after-form-submission",
+      "title": "Implement Check B (Simultaneous Events warning): when a booking request overlaps in time (same date) with other non-cancelled bookings in different venues, do not block the booking; instead, return a warning list including each simultaneous event’s club name, venue, and contact details, and display a non-blocking warning message to the user after form submission.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-check-c-15-minute-rest-gap-rule-if-the-requested-booking-is-in-the-same-venue-and-date-and-starts-less-than-15-minutes-after-a-previous-booking-ends-or-ends-less-than-15-minutes-before-the-next-booking-starts-treat-it-as-a-warning-that-requires-explicit-user-confirmation-via-a-confirm-booking-anyway-checkbox-the-backend-must-enforce-the-confirmation-flag-before-approving-creating-the-booking",
+      "title": "Implement Check C (15-minute rest-gap rule): if the requested booking is in the same venue and date and starts less than 15 minutes after a previous booking ends, or ends less than 15 minutes before the next booking starts, treat it as a warning that requires explicit user confirmation via a “Confirm Booking Anyway” checkbox; the backend must enforce the confirmation flag before approving/creating the booking.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-request-booking-api-contract-end-to-end-backend-actor-method-frontend-hook-booking-form-to-support-1-structured-hard-conflict-rejection-data-2-non-blocking-warnings-on-success-and-3-a-backend-enforced-rest-gap-confirmation-flag-without-breaking-existing-dashboards-and-schedule-views",
+      "title": "Update the request-booking API contract end-to-end (backend actor method + frontend hook + booking form) to support: (1) structured hard-conflict rejection data, (2) non-blocking warnings on success, and (3) a backend-enforced rest-gap confirmation flag, without breaking existing dashboards and schedule views.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-booking-flow-to-include-a-pre-submit-summary-panel-that-users-can-review-before-finalizing-a-booking-request-showing-detected-hard-conflicts-and-non-blocking-warnings",
+      "title": "Update the frontend booking flow to include a pre-submit summary panel that users can review before finalizing a booking request, showing detected hard conflicts and non-blocking warnings.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-new-react-query-hook-for-booking-preview-and-integrate-loading-error-states-into-the-booking-form-summary-step-without-modifying-immutable-hook-provider-files",
+      "title": "Add a new React Query hook for booking preview and integrate loading/error states into the booking form summary step without modifying immutable hook/provider files.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-booking-form-ui-to-rename-the-existing-club-name-field-to-club-event-while-keeping-the-current-dropdown-behavior-including-the-existing-clubs-list-and-the-others-option-with-the-custom-name-input",
+      "title": "Update the booking form UI to rename the existing \"Club Name\" field to \"Club / Event\" while keeping the current dropdown behavior (including the existing clubs list and the \"Others\" option with the custom-name input).",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-event-description-input-box-to-the-booking-form-and-include-it-in-the-pre-submit-review-summary-flow-so-the-user-can-review-the-description-before-confirming-the-booking-request",
+      "title": "Add an \"Event Description\" input box to the booking form and include it in the pre-submit review/summary flow so the user can review the description before confirming the booking request.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-backend-booking-data-model-to-store-an-event-description-with-each-booking-and-update-the-booking-request-and-booking-preview-api-contracts-end-to-end-to-accept-the-event-description-and-return-it-as-part-of-booking-data-used-by-dashboards-and-schedule-views",
+      "title": "Extend the backend booking data model to store an event description with each booking, and update the booking request and booking preview API contracts end-to-end to accept the event description and return it as part of Booking data used by dashboards and schedule views.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-the-saved-event-description-in-the-upcoming-event-detail-view",
+      "title": "Display the saved event description in the Upcoming Event Detail view.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-student-read-only-mode-students-can-view-schedules-and-event-details-but-must-not-be-able-to-create-edit-or-cancel-bookings-anywhere-in-the-app-ui",
+      "title": "Implement a student read-only mode: students can view schedules and event details, but must not be able to create, edit, or cancel bookings anywhere in the app UI.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-registration-ui-to-let-users-select-among-student-student-coordinator-and-faculty-and-ensure-user-facing-text-clearly-explains-that-student-coordinators-require-faculty-approval-before-they-can-book-cancel-venues",
+      "title": "Update the registration UI to let users select among Student, Student Coordinator, and Faculty, and ensure user-facing text clearly explains that Student Coordinators require faculty approval before they can book/cancel venues.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-read-only-gating-logic-to-reflect-the-new-permission-rules-students-are-always-read-only-student-coordinators-are-read-only-until-verified-faculty-is-not-read-only",
+      "title": "Update the frontend read-only gating logic to reflect the new permission rules: Students are always read-only; Student Coordinators are read-only until verified; Faculty is not read-only.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-verification-status-in-the-profile-dashboard-for-student-coordinators-e-g-pending-faculty-approval-vs-verified-and-ensure-the-label-is-accurate-after-faculty-actions",
+      "title": "Display verification status in the Profile dashboard for Student Coordinators (e.g., \"Pending faculty approval\" vs \"Verified\") and ensure the label is accurate after faculty actions.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-shared-frontend-backend-type-bindings-and-react-query-hooks-to-support-the-new-role-and-verification-fields-without-modifying-immutable-hook-provider-files",
+      "title": "Update the shared frontend/backend type bindings and React Query hooks to support the new role and verification fields without modifying immutable hook/provider files.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Recreate the club venue scheduling app using Motoko backend + React frontend (instead of Python/Streamlit/SQLite).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Implement bookings storage and conflict detection: prevent overlapping approved bookings for same venue/date/time; auto-approve when no conflict and reject with details when conflict exists.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Add authentication via Internet Identity and enforce login restriction to users with college official emails ending in nitj.ac.in (faculty and student coordinators).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Display today's confirmed schedule in a table so users can see free slots.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Create a Motoko persistence model for venue bookings with fields: id, club_name, venue, date, start_time, end_time, status; and support reading/writing bookings from stable state in the single main actor.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Implement conflict detection in the backend equivalent to check_conflict(venue, date, start, end): if any APPROVED booking for the same venue and date overlaps the requested start/end time, treat it as a conflict.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Replace the venue dropdown list полностью with: LT 101, LT 102, LT 103, LT 104, LT 201, LT 202, LT 203, LT 204, LT 301, LT 302, LT 303, LT 304, LT 401, LT 402, LT 403, LT 404, plus IT Park, Main Ground, Community Center; remove the previous venue list.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Change Club Name field from free-text to a dropdown containing the provided club list plus an 'Others' option; when 'Others' is selected, allow custom club name entry for special events/programs.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Add dashboards: Profile dashboard, Upcoming Event Detail dashboard, and Notification dashboard.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Add booking cancellation capability (user option to cancel an event/booking), and support expected audience field plus selection/management of multiple events.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Add backend query endpoints needed by the new dashboards to retrieve the current user’s bookings (including upcoming and historical) and to retrieve the current user’s notifications.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Enhance same-venue overlap (hard conflict) handling: reject booking and return/display the conflicting booking’s club name plus club head contact name & phone number in the error message.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Add simultaneous-events (different venue, overlapping time) detection: on submit, return a non-blocking warning listing concurrent events (club names, venues, and contact info).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Implement <15-minute rest-gap rule for same venue: warn and require a 'Confirm Booking Anyway' checkbox; backend must enforce a confirmation flag before approving.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Add a pre-submit booking summary panel that displays detected conflicts and non-blocking warnings before the user finalizes a booking request.",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Add a backend \"preview booking\" API that runs the same validation logic as booking submission (hard conflict check, simultaneous-events warnings, and rest-gap warning detection) but does not create/persist a booking.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Update booking form: change the \"Club Name\" field into a \"Club / Event\" selector (clubs/event) while keeping dropdown-style selection.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Add an \"Event Description\" input box to the booking form and display the description in event detail views.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Implement a student read-only mode: students can view event details and schedules but cannot create, edit, or cancel bookings (no modification capabilities).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Enforce student read-only mode in the backend by preventing student users from mutating bookings (requesting or cancelling), while still allowing them to read schedules and view event details that are already exposed to them.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-35",
+      "summary": "Implement a three-role access system: Student (read-only), Student Coordinator (must be faculty-verified/approved before gaining booking permissions), and Faculty (full permissions), including the faculty verification workflow and enforcement in both UI and backend.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-36",
+      "summary": "Extend the backend profile role model to support three roles: Student (read-only), Student Coordinator (requires faculty verification before gaining booking permissions), and Faculty (full permissions).",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Add backend persistence and APIs for the Student Coordinator faculty-verification workflow: allow Student Coordinators to be in an unverified state after registration, allow Faculty to list pending verification requests, and allow Faculty to approve or reject verification requests.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Update backend authorization enforcement so that only Faculty and verified Student Coordinators can create or cancel bookings; Students and unverified Student Coordinators must be blocked from all booking mutations (requestBooking, cancelBooking, cancelBookings) while still being allowed to read schedules and event details.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-41",
+      "summary": "Add a Faculty-only frontend dashboard/tab to manage Student Coordinator verification requests (view pending requests and approve/reject them).",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "NITJ venue booking app with conflict detection and Internet Identity access gating",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

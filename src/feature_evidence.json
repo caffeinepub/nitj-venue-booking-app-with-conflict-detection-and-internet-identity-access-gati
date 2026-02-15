@@ -1,0 +1,86 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-registration-ui-to-let-users-select-among-student-student-coordinator-and-faculty-and-ensure-user-facing-text-clearly-explains-that-student-coordinators-require-faculty-approval-before-they-can-book-cancel-venues",
+      "featureTitle": "Update the registration UI to let users select among Student, Student Coordinator, and Faculty, and ensure user-facing text clearly explains that Student Coordinators require faculty approval before they can book/cancel venues.",
+      "files": [
+        "frontend/src/components/auth/RegistrationGate.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-35"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-frontend-read-only-gating-logic-to-reflect-the-new-permission-rules-students-are-always-read-only-student-coordinators-are-read-only-until-verified-faculty-is-not-read-only",
+      "featureTitle": "Update the frontend read-only gating logic to reflect the new permission rules: Students are always read-only; Student Coordinators are read-only until verified; Faculty is not read-only.",
+      "files": [
+        "frontend/src/components/dashboards/UpcomingEventDetailView.tsx",
+        "frontend/src/components/dashboards/UpcomingEventsDashboard.tsx",
+        "frontend/src/hooks/useIsStudentReadOnly.ts",
+        "frontend/src/pages/BookingPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-36"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-display-verification-status-in-the-profile-dashboard-for-student-coordinators-e-g-pending-faculty-approval-vs-verified-and-ensure-the-label-is-accurate-after-faculty-actions",
+      "featureTitle": "Display verification status in the Profile dashboard for Student Coordinators (e.g., \"Pending faculty approval\" vs \"Verified\") and ensure the label is accurate after faculty actions.",
+      "files": [
+        "frontend/src/components/dashboards/ProfileDashboard.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-38"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-shared-frontend-backend-type-bindings-and-react-query-hooks-to-support-the-new-role-and-verification-fields-without-modifying-immutable-hook-provider-files",
+      "featureTitle": "Update the shared frontend/backend type bindings and React Query hooks to support the new role and verification fields without modifying immutable hook/provider files.",
+      "files": [
+        "frontend/src/hooks/useApproveVerificationRequest.ts",
+        "frontend/src/hooks/useIsStudentReadOnly.ts",
+        "frontend/src/hooks/usePendingVerificationRequests.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-39"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
