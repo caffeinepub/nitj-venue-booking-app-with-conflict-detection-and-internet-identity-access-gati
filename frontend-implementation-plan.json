@@ -1,0 +1,35 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Fix: Send in-app notifications to all faculty when Student Coordinator registers",
+  "requirements": [
+    {
+      "id": "REQ-2",
+      "summary": "Display pending Student Coordinator approval notifications in faculty NotificationsDashboard with Approve/Reject actions",
+      "acceptanceCriteria": [
+        "Faculty Notifications tab shows a card for each pending coordinator with the coordinator's display name and email visible.",
+        "Each card has an Approve button and a Reject button; clicking either calls the appropriate backend mutation.",
+        "After one faculty member approves or rejects, the coordinator's verification status in their profile is updated accordingly.",
+        "After approval or rejection, the notification is cleared from all faculty accounts' notification lists (backend removes or marks it resolved for all faculty principals).",
+        "The Student Coordinator's profile Verification Status badge updates to Approved or Rejected upon the next fetch after faculty action."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/dashboards/NotificationsDashboard.tsx",
+          "operation": "modify",
+          "description": "Update NotificationsDashboard to render coordinator verification request notifications for faculty users. Parse the notification content to extract coordinator name, email, and principal. Display each coordinator request in a dedicated card with the coordinator's name and email prominently shown. Include Approve and Reject action buttons that call useApproveVerificationRequest and useRejectVerification mutations respectively. After a faculty member acts on a request, the mutation should trigger query invalidation for pending requests and notifications, clearing the notification from all faculty accounts. Ensure the UI shows loading states during approval/rejection and displays success feedback."
+        },
+        {
+          "path": "frontend/src/hooks/useApproveVerificationRequest.ts",
+          "operation": "modify",
+          "description": "Update the mutation's onSuccess handler to explicitly call resolveCoordinatorVerificationNotifications after approving a verification request. This ensures the backend clears the pending-approval notification from all faculty accounts. Pass the coordinator's principal to the backend method. Invalidate both 'pendingVerificationRequests' and 'notifications' query keys to refresh the faculty UI immediately after approval."
+        },
+        {
+          "path": "frontend/src/hooks/useRejectVerification.ts",
+          "operation": "modify",
+          "description": "Update the mutation's onSuccess handler to explicitly call resolveCoordinatorVerificationNotifications after rejecting a verification request. This ensures the backend clears the pending-approval notification from all faculty accounts. Pass the coordinator's principal to the backend method. Invalidate both 'pendingVerificationRequests' and 'notifications' query keys to refresh the faculty UI immediately after rejection."
+        }
+      ]
+    }
+  ]
+}

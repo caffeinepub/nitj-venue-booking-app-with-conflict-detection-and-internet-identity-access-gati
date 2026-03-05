@@ -1,0 +1,45 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-25T05:41:02.555Z",
+  "summary": "The diff implements most of the required functionality across backend and frontend. The backend (main.mo) includes profile registration with coordinator notification logic, and frontend hooks for approve/reject verification call resolveCoordinatorVerificationNotifications. The NotificationsDashboard renders faculty approval cards. However, due to truncation of backend/main.mo and NotificationsDashboard.tsx, some acceptance criteria cannot be fully verified. One notable concern is that the Notification type in backend/main.mo does not appear to include coordinator principal or action-tag fields needed for REQ-1 AC-2, and the resolveCoordinatorVerificationNotifications backend method is not visible in the truncated diff.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Each faculty notification must contain the coordinator's name, email, and principal, and be tagged so the frontend can render Approve/Reject actions.",
+      "reason": "The Notification type shown in backend/main.mo only has fields: id, title, content, timestamp, isRead. There is no coordinatorPrincipal field or action-tag field visible in the type definition. Without these, the frontend cannot reliably extract the coordinator's principal to call approve/reject from the notification itself.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "A backend method resolveCoordinatorVerificationNotifications must exist that removes or marks as resolved the coordinator's pending-approval notification for ALL faculty principals.",
+      "reason": "The frontend hooks call actor.resolveCoordinatorVerificationNotifications, but the backend/main.mo file is truncated and this method is not visible in the shown portion. Cannot confirm the backend implementation exists.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useApproveVerification.ts",
+        "frontend/src/hooks/useRejectVerification.ts"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "A migration module (backend/migration.mo) was added with a run function.",
+      "reason": "The build request does not mention any migration module or data migration requirement. This file was added without any corresponding requirement.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.55,
+  "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/components/dashboards/NotificationsDashboard.tsx",
+    "frontend/src/hooks/useApproveVerification.ts",
+    "frontend/src/hooks/useRejectVerification.ts",
+    "project_state.json"
+  ]
+}

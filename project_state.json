@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "NITJ Venue Booking app with role-based access for Student Coordinators, Faculty, and Admin. Key fix in progress: when a Student Coordinator registers, all faculty accounts should receive an in-app bell notification to approve/reject the account. Once any faculty member acts, the coordinator's status updates and the notification resolves for others.",
+  "architectural_notes": [
+    "Role-based system with at least three roles: Student Coordinator, Faculty, Admin",
+    "Student Coordinator accounts start in 'Pending Faculty Approval' status after registration",
+    "Any faculty member (not a specific one) can approve/reject a pending Student Coordinator account"
+  ],
+  "known_issues": [
+    "Faculty do not receive in-app notifications when a Student Coordinator registers and awaits approval — previous fix attempts (builds) failed twice"
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-in-the-notificationsdashboard-component-faculty-users-must-see-pending-student-coordinator-approval-notifications-rendered-with-the-coordinator-s-name-email-and-approve-reject-action-buttons-when-a-faculty-member-approves-or-rejects-the-coordinator-s-verification-status-must-be-updated-and-the-notification-must-be-marked-as-resolved-removed-or-dismissed-for-all-faculty-accounts",
+      "title": "In the NotificationsDashboard component, faculty users must see pending Student Coordinator approval notifications rendered with the coordinator's name, email, and Approve / Reject action buttons. When a faculty member approves or rejects, the coordinator's verification status must be updated and the notification must be marked as resolved (removed or dismissed) for all faculty accounts.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "When a Student Coordinator registers, send in-app bell notifications to all faculty accounts with Approve/Reject action; once any faculty acts, update coordinator status and resolve notification for others",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "When a Student Coordinator successfully registers (profile is created with role 'StudentCoordinator'), the backend must automatically create an in-app notification for every existing faculty account. The notification message must indicate that a new Student Coordinator account is pending approval, including the coordinator's name and email. This notification creation must happen inside the profile registration logic in the main actor.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Add or update a backend method (e.g., resolveCoordinatorVerificationNotifications) that, when any faculty member approves or rejects a pending Student Coordinator, removes or marks as resolved the corresponding verification-request notification for ALL faculty principals — not just the acting faculty member.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "NITJ Venue Booking",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

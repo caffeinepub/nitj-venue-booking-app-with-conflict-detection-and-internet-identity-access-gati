@@ -1,0 +1,62 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-25T05:41:02.558Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 1,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "When a Student Coordinator successfully registers (profile is created with role 'StudentCoordinator'), the backend must automatically create an in-app notification for every existing faculty account. The notification message must indicate that a new Student Coordinator account is pending approval, including the coordinator's name and email. This notification creation must happen inside the profile registration logic in the main actor.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-2",
+        "summary": "In the NotificationsDashboard component, faculty users must see pending Student Coordinator approval notifications rendered with the coordinator's name, email, and Approve / Reject action buttons. When a faculty member approves or rejects, the coordinator's verification status must be updated and the notification must be marked as resolved (removed or dismissed) for all faculty accounts.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/dashboards/NotificationsDashboard.tsx",
+          "frontend/src/hooks/useApproveVerificationRequest.ts",
+          "frontend/src/hooks/useRejectVerification.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/dashboards/NotificationsDashboard.tsx",
+          "frontend/src/hooks/useRejectVerification.ts"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Add or update a backend method (e.g., resolveCoordinatorVerificationNotifications) that, when any faculty member approves or rejects a pending Student Coordinator, removes or marks as resolved the corresponding verification-request notification for ALL faculty principals — not just the acting faculty member.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/dashboards/NotificationsDashboard.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useApproveVerification.ts",
+    "frontend/src/hooks/useRejectVerification.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

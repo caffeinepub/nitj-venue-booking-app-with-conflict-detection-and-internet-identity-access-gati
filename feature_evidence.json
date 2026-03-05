@@ -1,0 +1,25 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-in-the-notificationsdashboard-component-faculty-users-must-see-pending-student-coordinator-approval-notifications-rendered-with-the-coordinator-s-name-email-and-approve-reject-action-buttons-when-a-faculty-member-approves-or-rejects-the-coordinator-s-verification-status-must-be-updated-and-the-notification-must-be-marked-as-resolved-removed-or-dismissed-for-all-faculty-accounts",
+      "featureTitle": "In the NotificationsDashboard component, faculty users must see pending Student Coordinator approval notifications rendered with the coordinator's name, email, and Approve / Reject action buttons. When a faculty member approves or rejects, the coordinator's verification status must be updated and the notification must be marked as resolved (removed or dismissed) for all faculty accounts.",
+      "files": [
+        "frontend/src/components/dashboards/NotificationsDashboard.tsx",
+        "frontend/src/hooks/useRejectVerification.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

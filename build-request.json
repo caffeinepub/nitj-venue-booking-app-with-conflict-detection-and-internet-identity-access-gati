@@ -1,0 +1,82 @@
+{
+  "kind": "build_request",
+  "title": "Fix: Send in-app notifications to all faculty when Student Coordinator registers",
+  "projectName": "NITJ Venue Booking",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "When a Student Coordinator successfully registers (profile is created with role 'StudentCoordinator'), the backend must automatically create an in-app notification for every existing faculty account. The notification message must indicate that a new Student Coordinator account is pending approval, including the coordinator's name and email. This notification creation must happen inside the profile registration logic in the main actor.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "when student coordinator create our account so they show pending faculty approval but faculty dont get any notification to verify student coordinator",
+          "should it appears as an in app notification",
+          "go to all faculty account and any one faculty verify it"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When registerProfile is called with role StudentCoordinator, the backend iterates all stored user profiles and creates a notification for every profile with role Faculty.",
+        "Each faculty notification contains the coordinator's name, email, and principal, and is tagged so the frontend can render Approve/Reject actions.",
+        "Notifications are persisted in the backend notification store and retrievable via the existing getUserNotifications method for each faculty principal."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "In the NotificationsDashboard component, faculty users must see pending Student Coordinator approval notifications rendered with the coordinator's name, email, and Approve / Reject action buttons. When a faculty member approves or rejects, the coordinator's verification status must be updated and the notification must be marked as resolved (removed or dismissed) for all faculty accounts.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "Faculty will see it in their Notifications tab with the coordinator's name/email and Approve / Reject buttons",
+          "Once any faculty member acts on it, the Student Coordinator's status updates and the notification is resolved for others"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Faculty Notifications tab shows a card for each pending coordinator with the coordinator's display name and email visible.",
+        "Each card has an Approve button and a Reject button; clicking either calls the appropriate backend mutation.",
+        "After one faculty member approves or rejects, the coordinator's verification status in their profile is updated accordingly.",
+        "After approval or rejection, the notification is cleared from all faculty accounts' notification lists (backend removes or marks it resolved for all faculty principals).",
+        "The Student Coordinator's profile Verification Status badge updates to Approved or Rejected upon the next fetch after faculty action."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add or update a backend method (e.g., resolveCoordinatorVerificationNotifications) that, when any faculty member approves or rejects a pending Student Coordinator, removes or marks as resolved the corresponding verification-request notification for ALL faculty principals — not just the acting faculty member.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "Once one faculty acts on it, the request is resolved and the notification is cleared for others"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Calling approve or reject for a coordinator triggers removal of that coordinator's pending-approval notification from every faculty account's notification list.",
+        "After resolution, no faculty account sees the already-acted-upon coordinator notification in their Notifications tab."
+      ]
+    }
+  ],
+  "constraints": [
+    "All Motoko logic must remain in the single backend/main.mo actor.",
+    "Do not modify files listed in frontend.immutablePaths.",
+    "Notification creation for faculty must occur atomically within the existing profile registration flow — do not introduce a separate service or canister.",
+    "Reuse existing notification data types and storage structures already defined in backend/main.mo."
+  ],
+  "nonGoals": [
+    "Email or SMS notifications to faculty — only in-app bell notifications are required.",
+    "Restricting which faculty member can approve (any faculty member may act).",
+    "Changes to the booking request workflow — this fix is scoped to Student Coordinator account verification only.",
+    "Admin role involvement in the coordinator verification flow."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
